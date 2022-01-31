@@ -7,6 +7,7 @@ import com.fundamentosplatzi.sprintboot.fundamentos.component.ComponentDependenc
 import com.fundamentosplatzi.sprintboot.fundamentos.entity.User;
 import com.fundamentosplatzi.sprintboot.fundamentos.pojo.UserPojo;
 import com.fundamentosplatzi.sprintboot.fundamentos.repository.UserRepository;
+import com.fundamentosplatzi.sprintboot.fundamentos.service.UserService;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,17 +30,19 @@ public class FundamentosApplication implements CommandLineRunner {
 	private MyBeanWithProperties myBeanWithProperties;
 	private UserPojo userPojo;
 	private UserRepository userRepository;
+	private UserService userService;
 
 	public FundamentosApplication(@Qualifier("componentTwoImplement") ComponentDependency componentDependency,
 								  MyBean myBean, MyBeanWithDependency myBeanWithDependency,
 								  MyBeanWithProperties myBeanWithProperties,UserPojo userPojo,
-			                      UserRepository userRepository){
+			                      UserRepository userRepository, UserService userService){
 		this.componentDependency = componentDependency;
 		this.myBean = myBean;
 		this.myBeanWithDependency = myBeanWithDependency;
 		this.myBeanWithProperties = myBeanWithProperties;
 		this.userPojo = userPojo;
 		this.userRepository = userRepository;
+		this.userService = userService;
 	}
 
 
@@ -51,8 +54,21 @@ public class FundamentosApplication implements CommandLineRunner {
 	public void run(String... args)  {
 		//ejemploClasesAnteriores();
 		//saveUsersInDataBase();
-		getInformationFromJPQL();
+		//getInformationFromJPQL();
+		saveWithErrorTransactional();
 
+	}
+
+	private void saveWithErrorTransactional(){
+		User test1 = new User("Test1Transactional1", "testTransactional1@domain.com", LocalDate.now());
+		User test2 = new User("Test2Transactional1", "testTransactional2@domain.com", LocalDate.now());
+		User test3 = new User("Test3Transactional1", "testTransactional3@domain.com", LocalDate.now());
+		User test4 = new User("Test4Transactional1", "testTransactional4@domain.com", LocalDate.now());
+
+		List<User> users = Arrays.asList(test1, test2, test3, test4);
+		userService.saveTransactional(users);
+		userService.getAllUsers().stream()
+				.forEach(user -> LOGGER.info("Este es el usuario dentro del metodo transactional " + user));
 	}
 
 	private void saveUsersInDataBase(){
@@ -82,6 +98,36 @@ public class FundamentosApplication implements CommandLineRunner {
 		userRepository.findAndSort("user", Sort.by("id").descending())
 				.stream()
 				.forEach(user -> LOGGER.info("User with methodo "+ user));
+
+		userRepository.findByName("Luis")
+		.stream()
+		.forEach(user -> LOGGER.info("Usuario con query method " + user));
+
+		LOGGER.info("Usuario con Query Method " + userRepository.findByEmailAndName("daniela@gmail.com","dani" )
+				.orElseThrow(() -> new RuntimeException("No se encontro el usuario")));
+
+		userRepository.findByNameLike("%user%")
+				.stream()
+				.forEach(user -> LOGGER.info("usuario con findByNameLike  "+ user));
+
+		userRepository.findByNameOrEmail(null,"jhon10@gmail.com")
+				.stream()
+				.forEach(user -> LOGGER.info("usuario con findByNameOrEmail  "+ user));
+
+		userRepository.findByBirthDateBetween( LocalDate.of(2021,03,01),  LocalDate.of(2021,04,11))
+				.stream()
+				.forEach(user -> LOGGER.info("usuario con findByBirthDateBetween  "+ user));
+
+		userRepository.findByNameLikeOrderByIdDesc("%jhon%")
+				.stream()
+				.forEach(user -> LOGGER.info("Usuario encontrado con findByNameLikeOrderByIdDesc " + user));
+
+		userRepository.findByNameContainingOrderByIdDesc("jhon")
+				.stream()
+				.forEach(user -> LOGGER.info("Usuario encontrado con findByNameLikeOrderByIdDesc " + user));
+
+		LOGGER.info("El usuario a partir del named parameter es " + userRepository.getAllByBirthDateAndEmail( LocalDate.of(2021,07,21),"daniela@gmail.com")
+				.orElseThrow(() -> new RuntimeException("No se encontro el usuario a partir del named parameter")));
 	}
 
 	private void ejemploClasesAnteriores(){

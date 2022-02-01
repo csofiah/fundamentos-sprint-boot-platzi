@@ -5,12 +5,12 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 
 @ConstructorBinding
 @ConfigurationProperties(prefix = "user")
-public class UserPojo {
+public class UserProperties {
     private String email;
     private String password;
     private int age;
 
-    public UserPojo(String email, String password, int age) {
+    public UserProperties(String email, String password, int age) {
         this.email = email;
         this.password = password;
         this.age = age;
@@ -38,5 +38,14 @@ public class UserPojo {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "UserPojo{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", age=" + age +
+                '}';
     }
 }

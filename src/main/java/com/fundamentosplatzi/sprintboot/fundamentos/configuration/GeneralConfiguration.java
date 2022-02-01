@@ -2,7 +2,7 @@ package com.fundamentosplatzi.sprintboot.fundamentos.configuration;
 
 import com.fundamentosplatzi.sprintboot.fundamentos.bean.MyBeanWithProperties;
 import com.fundamentosplatzi.sprintboot.fundamentos.bean.MyBeanWithPropertiesImplement;
-import com.fundamentosplatzi.sprintboot.fundamentos.pojo.UserPojo;
+import com.fundamentosplatzi.sprintboot.fundamentos.pojo.UserProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @PropertySource("classpath:connection.properties")
-@EnableConfigurationProperties(UserPojo.class)
+@EnableConfigurationProperties(UserProperties.class)
 public class GeneralConfiguration {
     @Value("${value.name}")
     private String name;
@@ -32,7 +32,7 @@ public class GeneralConfiguration {
     private String driver;
 
     @Value("${username}")
-    private String username;
+    private String userName;
 
     @Value("${password}")
     private String password;
@@ -47,7 +47,7 @@ public class GeneralConfiguration {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName(driver);
         dataSourceBuilder.url(jdbcUrl);
-        dataSourceBuilder.username(username);
+        dataSourceBuilder.username(userName);
         dataSourceBuilder.password(password);
         return dataSourceBuilder.build();
     }

@@ -5,7 +5,7 @@ import com.fundamentosplatzi.sprintboot.fundamentos.bean.MyBeanWithDependency;
 import com.fundamentosplatzi.sprintboot.fundamentos.bean.MyBeanWithProperties;
 import com.fundamentosplatzi.sprintboot.fundamentos.component.ComponentDependency;
 import com.fundamentosplatzi.sprintboot.fundamentos.entity.User;
-import com.fundamentosplatzi.sprintboot.fundamentos.pojo.UserPojo;
+import com.fundamentosplatzi.sprintboot.fundamentos.pojo.UserProperties;
 import com.fundamentosplatzi.sprintboot.fundamentos.repository.UserRepository;
 import com.fundamentosplatzi.sprintboot.fundamentos.service.UserService;
 import org.apache.juli.logging.Log;
@@ -28,19 +28,19 @@ public class FundamentosApplication implements CommandLineRunner {
 	private MyBean myBean;
 	private MyBeanWithDependency myBeanWithDependency;
 	private MyBeanWithProperties myBeanWithProperties;
-	private UserPojo userPojo;
+	private UserProperties userProperties;
 	private UserRepository userRepository;
 	private UserService userService;
 
 	public FundamentosApplication(@Qualifier("componentTwoImplement") ComponentDependency componentDependency,
 								  MyBean myBean, MyBeanWithDependency myBeanWithDependency,
-								  MyBeanWithProperties myBeanWithProperties,UserPojo userPojo,
-			                      UserRepository userRepository, UserService userService){
+								  MyBeanWithProperties myBeanWithProperties, UserProperties userProperties,
+								  UserRepository userRepository, UserService userService){
 		this.componentDependency = componentDependency;
 		this.myBean = myBean;
 		this.myBeanWithDependency = myBeanWithDependency;
 		this.myBeanWithProperties = myBeanWithProperties;
-		this.userPojo = userPojo;
+		this.userProperties = userProperties;
 		this.userRepository = userRepository;
 		this.userService = userService;
 	}
@@ -52,10 +52,12 @@ public class FundamentosApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args)  {
+
+		//saveUsersInDb();
 		//ejemploClasesAnteriores();
-		//saveUsersInDataBase();
-		//getInformationFromJPQL();
-		saveWithErrorTransactional();
+		saveUsersInDataBase();
+		getInformationFromJPQL();
+		//saveWithErrorTransactional();
 
 	}
 
@@ -89,9 +91,31 @@ public class FundamentosApplication implements CommandLineRunner {
 		list.stream().forEach(userRepository::save);
 	}
 
+	private void saveUsersInDb() {
+		User user1 = new User("John", "john@domain.com", LocalDate.now());
+		User user2 = new User("Julie", "julie@domain.com", LocalDate.now());
+		User user3 = new User("Daniela", "daniela@domain.com", LocalDate.now());
+		User user4 = new User("Oscar", "oscar@domain.com", LocalDate.now());
+		User user5 = new User("Test1", "Test1@domain.com", LocalDate.now());
+		User user6 = new User("Test2", "Test2@domain.com", LocalDate.now());
+		User user7 = new User("Test3", "Test3@domain.com", LocalDate.now());
+		User user8 = new User("Test4", "Test4@domain.com", LocalDate.now());
+		User user9 = new User("Test5", "Test5@domain.com", LocalDate.now());
+		User user10 = new User("Test6", "Test6@domain.com", LocalDate.now());
+		User user11 = new User("Test7", "Test7@domain.com", LocalDate.now());
+		User user12 = new User("Test8", "Test8@domain.com", LocalDate.now());
+		User user13 = new User("Test9", "Test9@domain.com", LocalDate.now());
+		List<User> list = Arrays.asList(user4, user1, user3, user2, user5, user6, user7, user8, user9, user10, user11, user12, user13);
+		list.stream().forEach(userRepository::save);
+	//	postRepository.save(new Posts("Mi post test1", user12));
+	//	postRepository.save(new Posts("Mi post test2", user13));
+	//	postRepository.save(new Posts("Mi post test3", user13));
+
+	}
+
 	private void getInformationFromJPQL(){
 		LOGGER.info("usuario con el metodo findByUserEmail "+
-				userRepository.findByUserEmail("jhon@gmail.com")
+				userRepository.findMyUserByEmail("jhon@gmail.com")
 						.orElseThrow(() -> new RuntimeException("No se encontro el usuario")));
 
 
@@ -135,7 +159,7 @@ public class FundamentosApplication implements CommandLineRunner {
 		myBean.print();
 		myBeanWithDependency.printWithDependency();
 		System.out.println(myBeanWithProperties.function());
-		System.out.println(userPojo.getEmail() + "-" + userPojo.getPassword());
+		System.out.println(userProperties.getEmail() + "-" + userProperties.getPassword());
 		LOGGER.error("esto es un error del app");
 	}
 }

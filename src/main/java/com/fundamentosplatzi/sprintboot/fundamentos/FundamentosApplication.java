@@ -56,19 +56,24 @@ public class FundamentosApplication implements CommandLineRunner {
 		//saveUsersInDb();
 		//ejemploClasesAnteriores();
 		saveUsersInDataBase();
-		getInformationFromJPQL();
-		//saveWithErrorTransactional();
+		//getInformationFromJPQL();
+		saveWithErrorTransactional();
 
 	}
 
 	private void saveWithErrorTransactional(){
 		User test1 = new User("Test1Transactional1", "testTransactional1@domain.com", LocalDate.now());
 		User test2 = new User("Test2Transactional1", "testTransactional2@domain.com", LocalDate.now());
-		User test3 = new User("Test3Transactional1", "testTransactional3@domain.com", LocalDate.now());
+		User test3 = new User("Test3Transactional1", "testTransactional1@domain.com", LocalDate.now());//mismo correo q test1
 		User test4 = new User("Test4Transactional1", "testTransactional4@domain.com", LocalDate.now());
 
 		List<User> users = Arrays.asList(test1, test2, test3, test4);
-		userService.saveTransactional(users);
+		try {
+			userService.saveTransactional(users);
+		}catch(Exception e){
+			LOGGER.error("esto es un error del metodo transaccional " + e.getMessage());
+		}
+
 		userService.getAllUsers().stream()
 				.forEach(user -> LOGGER.info("Este es el usuario dentro del metodo transactional " + user));
 	}

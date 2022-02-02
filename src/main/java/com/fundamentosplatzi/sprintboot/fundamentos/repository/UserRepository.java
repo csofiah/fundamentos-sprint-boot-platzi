@@ -43,4 +43,6 @@ public interface UserRepository extends PagingAndSortingRepository<User,Long > {
     Optional<UserDto> getAllByBirthDateAndEmail(@Param("parametroFecha") LocalDate date, @Param("parametroEmail") String email);
 
 
+    List<User> findAll(Sort sort);
+
 }

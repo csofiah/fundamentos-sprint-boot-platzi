@@ -6,9 +6,9 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-@ToString
-@Getter
 @Setter
+@Getter
+@ToString
 @Entity
 @Table(name = "post")
 public class Post {
@@ -18,20 +18,18 @@ public class Post {
     @Column(name = "id_post", nullable = false, unique = true)
     private Long id;
 
-    @Column(name="description", length = 250)
+    @Column(name="description", length = 255)
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "user_id") //No necesario para el ejemplo del curso pero se puede explicar
     private User user;
 
     public Post() {
     }
 
-    public Post(String description, User user) {
+    public Post(Long id, String description, User user) {
+        this.id = id;
         this.description = description;
         this.user = user;
     }
-
-
 }
